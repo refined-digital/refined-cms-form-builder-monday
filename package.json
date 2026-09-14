@@ -1,6 +1,6 @@
 {
   "name": "@refineddigital/cms-form-builder-monday",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "publish-and-tag": "git push --tags && git push origin main",
     "version:patch": "npm version patch && npm run publish-and-tag",
