@@ -1,0 +1,30 @@
+{
+  "name": "refineddigital/cms-form-builder-monday",
+  "description": "monday.com integration for Form Builder",
+  "require": {
+    "php": "^8.4",
+    "refineddigital/cms": "^1.36|dev-master",
+    "refineddigital/cms-form-builder": "^1.14|dev-master"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Matthias Law",
+      "email": "matthias@refineddigital.co.nz"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "RefinedDigital\\Monday\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "RefinedDigital\\Monday\\Module\\Providers\\FormBuilderMondayServiceProvider"
+      ],
+      "aliases": {
+      }
+    }
+  }
+}

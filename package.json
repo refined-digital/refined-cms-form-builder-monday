@@ -1,0 +1,22 @@
+{
+  "name": "@refineddigital/cms-form-builder-monday",
+  "version": "1.0.0",
+  "scripts": {
+    "publish-and-tag": "git push --tags && git push origin main",
+    "version:patch": "npm version patch && npm run publish-and-tag",
+    "version:minor": "npm version minor && npm run publish-and-tag",
+    "version:major": "npm version major && npm run publish-and-tag"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/refined-digital/refined-cms-form-builder-monday.git"
+  },
+  "author": "Matthias Law",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/refined-digital/refined-cms-form-builder-monday/issues"
+  },
+  "homepage": "https://github.com/refined-digital/refined-cms-form-builder-monday#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}
