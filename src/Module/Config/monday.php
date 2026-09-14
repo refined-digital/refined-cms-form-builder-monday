@@ -7,6 +7,7 @@ return [
     // unset = no alert (the failure is still report()ed to the logs)
     'error_email' => env('MONDAY_ERROR_EMAIL'),
 
-    // monday phone columns require an ISO-2 country alongside the number
+    // ISO-2 country phone numbers are local to (e.g. AU, NZ) — used to send them in
+    // international format, which monday's item view needs
     'phone_country' => env('MONDAY_PHONE_COUNTRY', 'NZ'),
 ];

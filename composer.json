@@ -3,6 +3,7 @@
   "description": "monday.com integration for Form Builder",
   "require": {
     "php": "^8.4",
+    "brick/phonenumber": "^0.8",
     "refineddigital/cms": "^1.36|dev-master",
     "refineddigital/cms-form-builder": "^1.14|dev-master"
   },

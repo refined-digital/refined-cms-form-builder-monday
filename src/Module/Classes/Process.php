@@ -2,6 +2,9 @@
 
 namespace RefinedDigital\Monday\Module\Classes;
 
+use Brick\PhoneNumber\PhoneNumber;
+use Brick\PhoneNumber\PhoneNumberFormat;
+use Brick\PhoneNumber\PhoneNumberParseException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -57,6 +60,8 @@ class Process implements FormBuilderIntegrationInterface
      * honouring the per-field toggles and dropping anything left blank.
      *
      * A form that has never been configured sends every field with a merge field.
+     * Every field mapped to `name` (e.g. First Name + Last Name) is joined, in form
+     * order, to make the item name.
      */
     protected function values($request, $form, array $config): array
     {
@@ -74,9 +79,18 @@ class Process implements FormBuilderIntegrationInterface
             }
 
             $value = $this->clean($request->get($field->field_name));
-            if ($value !== '' && $value !== []) {
-                $values[$field->merge_field] = $value;
+            if ($value === '' || $value === []) {
+                continue;
             }
+
+            if ($field->merge_field === 'name') {
+                $part = is_array($value) ? implode(', ', $value) : $value;
+                $values['name'] = isset($values['name']) ? $values['name'].' '.$part : $part;
+
+                continue;
+            }
+
+            $values[$field->merge_field] = $value;
         }
 
         return $values;
@@ -148,7 +162,7 @@ class Process implements FormBuilderIntegrationInterface
 
         return match ($type) {
             'email'     => ['email' => $text, 'text' => $text],
-            'phone'     => ['phone' => preg_replace('/[^\d+]/', '', $text), 'countryShortName' => config('monday.phone_country', 'NZ')],
+            'phone'     => $this->phone($text),
             'long_text' => ['text' => $text],
             'status'    => ['label' => $text],
             'dropdown'  => ['labels' => (array) $value],
@@ -157,6 +171,29 @@ class Process implements FormBuilderIntegrationInterface
             'date'      => ['date' => $text],
             default     => $text,
         };
+    }
+
+    /**
+     * Phone column value in international format for monday.phone_country
+     * (AU: 0412 345 678 => +61412345678) — monday's item view drops local numbers.
+     *
+     * @return array{phone: string, countryShortName: string}
+     */
+    protected function phone(string $text): array
+    {
+        $country = strtoupper((string) config('monday.phone_country', 'NZ'));
+        $phone = preg_replace('/[^\d+]/', '', $text);
+
+        try {
+            $parsed = PhoneNumber::parse($phone, $country);
+            $phone = $parsed->format(PhoneNumberFormat::E164);
+            // a number typed with its own +code keeps that country, not the configured one
+            $country = $parsed->getRegionCode() ?? $country;
+        } catch (PhoneNumberParseException) {
+            // an unparseable number is sent as typed rather than dropped
+        }
+
+        return ['phone' => $phone, 'countryShortName' => $country];
     }
 
     /**
